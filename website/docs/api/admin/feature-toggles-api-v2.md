@@ -9,12 +9,12 @@ title: /api/admin/projects/:projectId
 
 In this document we will guide you on how you can work with feature toggles and their configuration. Please remember the following details:
 
-- All feature toggles exists _inside a project_. 
-- A feature toggle exists _across all environments_. 
+- All feature toggles exists _inside a project_.
+- A feature toggle exists _across all environments_.
 - A feature toggle can take different configuration, activation strategies, per environment.
 
 
-> We will in this guide use [HTTPie](https://httpie.io) commands to show examples on how to interact with the API. 
+> We will in this guide use [HTTPie](https://httpie.io) commands to show examples on how to interact with the API.
 
 ### Get Project Overview {#fetching-project}
 
@@ -24,7 +24,10 @@ This endpoint will give you an general overview of a project. It will return ess
 
 **Example Query**
 
-`http GET http://localhost:4242/api/admin/projects/default Authorization:$KEY`
+```bash
+http GET http://localhost:4242/api/admin/projects/default Authorization:$KEY
+```
+
 
 
 **Example response:**
@@ -90,7 +93,11 @@ This endpoint will return all feature toggles and high level environment details
 
 **Example Query**
 
-`http GET http://localhost:4242/api/admin/projects/default/features Authorization:$KEY`
+``` bash
+http GET http://localhost:4242/api/admin/projects/default/features \
+Authorization:$KEY
+```
+
 
 
 **Example response:**
@@ -148,8 +155,10 @@ This endpoint will accept HTTP POST request to create a new feature toggle for a
 
 **Example Query**
 
-```sh
-echo '{"name": "demo2", "description": "A new feature toggle"}' | http POST http://localhost:4242/api/admin/projects/default/features Authorization:$KEY`
+```bash
+echo '{"name": "demo2", "description": "A new feature toggle"}' | \
+http POST http://localhost:4242/api/admin/projects/default/features \
+Authorization:$KEY`
 ```
 
 
@@ -192,8 +201,9 @@ This endpoint will return the feature toggles with the defined name and _project
 
 **Example Query**
 
-```sh
-http GET http://localhost:4242/api/admin/projects/default/features/demo Authorization:$KEY`
+```bash
+http GET http://localhost:4242/api/admin/projects/default/features/demo \
+Authorization:$KEY`
 ```
 
 **Example response:**
@@ -243,8 +253,10 @@ This endpoint will accept HTTP PUT request to update the feature toggle metadata
 
 **Example Query**
 
-```sh
-echo '{"name": "demo", "description": "An update feature toggle", "type": "kill-switch"}' | http PUT http://localhost:4242/api/admin/projects/default/features/demo Authorization:$KEY`
+```bash
+echo '{"name": "demo", "description": "An update feature toggle", "type": "kill-switch"}' | \
+http PUT http://localhost:4242/api/admin/projects/default/features/demo \
+Authorization:$KEY`
 ```
 
 
@@ -278,8 +290,10 @@ This endpoint will accept HTTP PATCH request to update the feature toggle metada
 
 **Example Query**
 
-```sh
-echo '[{"op": "replace", "path": "/description", "value": "patched desc"}]' | http PATCH http://localhost:4242/api/admin/projects/default/features/demo Authorization:$KEY`
+```bash
+echo '[{"op": "replace", "path": "/description", "value": "patched desc"}]' | \
+http PATCH http://localhost:4242/api/admin/projects/default/features/demo \
+Authorization:$KEY`
 ```
 
 
@@ -314,8 +328,10 @@ This endpoint will accept HTTP POST request to clone an existing feature toggle 
 
 **Example Query**
 
-```sh
-echo '{ "name": "newName" }' | http POST http://localhost:4242/api/admin/projects/default/features/Demo/clone Authorization:$KEY`
+```bash
+echo '{ "name": "newName" }' | \
+http POST http://localhost:4242/api/admin/projects/default/features/Demo/clone \
+Authorization:$KEY`
 ```
 
 
@@ -366,21 +382,21 @@ This endpoint will accept HTTP PUT request to update the feature toggle metadata
 
 **Example Query**
 
-```sh
-http DELETE http://localhost:4242/api/admin/projects/default/features/demo Authorization:$KEY`
+```bash
+http DELETE http://localhost:4242/api/admin/projects/default/features/demo \
+Authorization:$KEY`
 ```
 
 
 **Example response:**
 
-```sh
+```
 HTTP/1.1 202 Accepted
 Access-Control-Allow-Origin: *
 Connection: keep-alive
 Date: Wed, 08 Sep 2021 20:09:21 GMT
 Keep-Alive: timeout=60
 Transfer-Encoding: chunked
-
 ```
 
 
@@ -388,13 +404,21 @@ Transfer-Encoding: chunked
 
 `http://localhost:4242/api/admin/projects/:projectId/features/:featureName/environments/:environment/strategies`
 
-This endpoint will allow you to add a new strategy to a feature toggle in a given environment. 
+This endpoint will allow you to add a new strategy to a feature toggle in a given environment.
 
 **Example Query**
 
-```sh
- echo '{"name": "flexibleRollout", "parameters": { "rollout": 20, "groupId": "demo", "stickiness": "default" }}' | \
- http POST http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies Authorization:$KEY
+```bash
+echo '{"name": "flexibleRollout",
+        "parameters": {
+            "rollout": 20,
+            "groupId": "demo",
+            "stickiness": "default"
+          }
+      }' | \
+http POST \
+http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies \
+Authorization:$KEY
 ```
 
 **Example response:**
@@ -416,9 +440,17 @@ This endpoint will allow you to add a new strategy to a feature toggle in a give
 
 **Example Query**
 
-```sh
-echo '{"name": "flexibleRollout", "parameters": { "rollout": 25, "groupId": "demo","stickiness": "default" }}' | \
-http PUT http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies/77bbe972-ffce-49b2-94d9-326593e2228e Authorization:$KEY
+```bash
+echo '{"name": "flexibleRollout",
+        "parameters": {
+          "rollout": 25,
+          "groupId": "demo",
+          "stickiness": "default"
+        }
+      }' | \
+http PUT \
+http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies/77bbe972-ffce-49b2-94d9-326593e2228e \
+Authorization:$KEY
 ```
 
 **Example response:**
@@ -440,9 +472,11 @@ http PUT http://localhost:4242/api/admin/projects/default/features/demo/environm
 
 **Example Query**
 
-```sh
+```bash
 echo '[{"op": "replace", "path": "/parameters/rollout", "value": 50}]' | \
-http PATCH http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies/ea5404e5-0c0d-488c-93b2-0a2200534827 Authorization:$KEY
+http PATCH \
+http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies/ea5404e5-0c0d-488c-93b2-0a2200534827 \
+Authorization:$KEY
 ```
 
 **Example response:**
@@ -465,13 +499,13 @@ http PATCH http://localhost:4242/api/admin/projects/default/features/demo/enviro
 
 **Example Query**
 
-```sh
+```bash
 http DELETE http://localhost:4242/api/admin/projects/default/features/demo/environments/production/strategies/77bbe972-ffce-49b2-94d9-326593e2228e Authorization:$KEY
 ```
 
 **Example response:**
 
-```sh
+```
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: *
 Connection: keep-alive
@@ -486,13 +520,13 @@ Vary: Accept-Encoding
 
 **Example Query**
 
-```sh
+```bash
 http POST http://localhost:4242/api/admin/projects/default/features/demo/environments/development/on Authorization:$KEY --json
 ```
 
 **Example response:**
 
-```sh
+```
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: *
 Connection: keep-alive
@@ -536,7 +570,7 @@ http PUT http://localhost:4242/api/admin/projects/default/features/demo/variants
 
 **Example response:**
 
-```sh
+```bash
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: *
 Connection: keep-alive
@@ -566,13 +600,15 @@ Content-Type: application/json; charset=utf-8
 
 **Example Query**
 
-```sh
+```bash
 echo '[{"op": "add", "path": "/1", "value": {
   "name": "new-variant",
   "weightType": "fix",
   "weight": 200
 }}]' | \
-http PATCH http://localhost:4242/api/admin/projects/default/features/demo/variants Authorization:$KEY
+http PATCH \
+http://localhost:4242/api/admin/projects/default/features/demo/variants \
+Authorization:$KEY
 ```
 
 ** Example Response **
