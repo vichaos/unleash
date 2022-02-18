@@ -2,6 +2,7 @@ import { createTransport, Transporter } from 'nodemailer';
 import Mustache from 'mustache';
 import path from 'path';
 import { readFileSync, existsSync } from 'fs';
+import { escape } from 'querystring';
 import { Logger, LogProvider } from '../logger';
 import NotFoundError from '../error/notfound-error';
 import { IEmailOption } from '../types/option';
@@ -57,7 +58,9 @@ export class EmailService {
             if (email.host === 'test') {
                 this.mailer = createTransport({ jsonTransport: true });
             } else {
-                const connectionString = `${email.smtpuser}:${email.smtppass}@${email.host}:${email.port}`;
+                const connectionString = escape(
+                    `${email.smtpuser}:${email.smtppass}@${email.host}:${email.port}`,
+                );
                 this.mailer = email.secure
                     ? createTransport(`smtps://${connectionString}`)
                     : createTransport(`smtp://${connectionString}`);
@@ -122,7 +125,6 @@ export class EmailService {
             this.logger.warn(
                 'No mailer is configured. Please read the docs on how to configure an emailservice',
             );
-            this.logger.debug('Reset link: ', resetLink);
             res({
                 from: this.sender,
                 to: recipient,
@@ -136,12 +138,11 @@ export class EmailService {
     async sendGettingStartedMail(
         name: string,
         recipient: string,
-        unleashUrl: string,
-        passwordLink?: string,
+        passwordLink: string,
     ): Promise<IEmailEnvelope> {
         if (this.configured()) {
             const year = new Date().getFullYear();
-            const context = { passwordLink, name, year, unleashUrl };
+            const context = { passwordLink, name, year };
             const bodyHtml = await this.compileTemplate(
                 'getting-started',
                 TemplateFormat.HTML,
@@ -226,3 +227,4 @@ export class EmailService {
         return this.sender !== 'not-configured' && this.mailer !== undefined;
     }
 }
+
